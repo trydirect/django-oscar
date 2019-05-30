@@ -1,0 +1,61 @@
+version: "2.1"
+
+volumes:
+  oscardb_data:
+    driver: local
+
+services:
+
+  oscardb:
+    container_name: oscardb
+    image: postgres:11.2
+    restart: always
+    ports:
+      - 5432
+    env_file:
+      - .env
+    volumes:
+      - oscardb_data:/var/lib/postgresql/data/pgdata
+      - ./scripts/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+      - ./configs/postgresql/pg_hba.conf:/var/lib/postgresql/data/pgdata/pg_hba.conf
+
+
+  oscar:
+    image: trydirect/django-oscar:1.6.7
+    build: build
+    container_name: oscar
+    restart: always
+    depends_on:
+      - oscardb
+    links:
+      - oscardb
+    env_file:
+      - .env
+    entrypoint: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
+    volumes:
+      - ./configs/oscar/settings.py:/app/sandbox/settings.py
+      - ./configs/supervisord/oscar.conf:/etc/supervisor/conf.d/oscar.conf
+
+  nginx:
+    image: trydirect/nginx:latest
+    container_name: nginx
+    env_file:
+      .env
+    ports:
+      - "80:80"
+      #- "443:443"
+    volumes:
+      - ./configs/certs/ssl:/etc/ssl/nginx
+      - ./configs/certs/letsencrypt:/etc/letsencrypt
+      - ./configs/cron/nginx:/var/spool/cron/crontabs
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d/
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./configs/null:/etc/nginx/sites-enabled
+      - ./configs/supervisord/nginx.conf:/etc/supervisor/conf.d/nginx.conf
+    depends_on:
+      - oscar
+    links:
+      - oscar
+    entrypoint: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
+    restart: always
+

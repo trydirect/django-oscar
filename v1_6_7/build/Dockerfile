@@ -1,6 +1,6 @@
 FROM python:3.6
 
-MAINTAINER Optimum "info@optimum-web.com"
+LABEL maintainer="info@optimum-web.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update  && apt-get autoremove -y && apt-get --no-install-recommends -y install locales supervisor curl \
@@ -15,12 +15,21 @@ RUN locale -a
 RUN PYTHON=python3.6 uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"
 RUN mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so
 
+RUN groupadd -r -g 2000 oscar; useradd -r -u 2000 -g 2000 -m -c "app account" -d /home/oscar -s /bin/bash oscar;
+
+RUN mkdir /app
+RUN chown oscar:oscar /app
+
+USER oscar
 WORKDIR /app
-RUN git clone -b stable --single-branch https://github.com/taigaio/taiga-back.git .
+RUN git clone https://github.com/django-oscar/django-oscar.git .
+RUN git checkout tags/1.6.7 -b "1.6.7"
 
 COPY wsgi.ini /app/sandbox/wsgi.ini
 COPY oscar.conf /etc/supervisor/conf.d/oscar.conf
 COPY settings.py /app/sandbox/settings.py
-RUN pip install -r requirements.txt && pip install uwsgi
 
+USER root
+RUN pip3 install django-oscar==1.6.7 psycopg2-binary uwsgi supervisor && pip3 install -r requirements.txt
+RUN cp --remove-destination /app/src/oscar/static/oscar/img/image_not_found.jpg /app/sandbox/public/media/
 EXPOSE 8000
