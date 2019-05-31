@@ -16,8 +16,8 @@ before_install:
 - docker-compose --version
 install:
 - cd v1_6_7
-- docker-compose -f docker-compose.yml build
-- docker-compose -f docker-compose.yml up -d
+- docker-compose build
+- docker-compose up -d
 - docker-compose ps
 - docker exec --user=oscar -it oscar /sandbox.sh
 before_script:
@@ -34,5 +34,5 @@ notifications:
 after_success:
 - cd v01/dockerfiles
 - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-- docker-compose -f docker-compose-build.yml images
+- docker-compose images
 - docker push trydirect/django-oscar:1.6.7
