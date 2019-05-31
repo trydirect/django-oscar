@@ -19,13 +19,13 @@ install:
 - docker-compose -f docker-compose.yml build
 - docker-compose -f docker-compose.yml up -d
 - docker-compose ps
+- docker exec --user=oscar -it oscar /sandbox.sh
 before_script:
 - pip install requests
 - pip install docker
 - cd $TRAVIS_BUILD_DIR
 script:
 - bash ./.travis/linters.sh
-- bash ./v1_6_7/scripts/sandbox.sh
 - python tests.py
 notifications:
   slack:
