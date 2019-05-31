@@ -3,6 +3,8 @@ version: "2.1"
 volumes:
   oscardb_data:
     driver: local
+  sentry_data:
+    driver: local
 
 services:
 
@@ -14,10 +16,10 @@ services:
       - 5432
     env_file:
       - .env
+    command: postgres -c hba_file=/etc/pg_hba.conf
     volumes:
-      - oscardb_data:/var/lib/postgresql/data/pgdata
-      - ./scripts/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
-      - ./configs/postgresql/pg_hba.conf:/var/lib/postgresql/data/pgdata/pg_hba.conf
+      - ./configs/postgresql/pg_hba.conf:/etc/pg_hba.conf
+      - oscardb_data:/var/lib/postgresql/data
 
 
   oscar:
@@ -31,10 +33,11 @@ services:
       - oscardb
     env_file:
       - .env
-    entrypoint: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
+    command: ['supervisord', '--nodaemon']
     volumes:
       - ./configs/oscar/settings.py:/app/sandbox/settings.py
       - ./configs/supervisord/oscar.conf:/etc/supervisor/conf.d/oscar.conf
+      - ./scripts/sandbox.sh:/sandbox.sh
 
   nginx:
     image: trydirect/nginx:latest
@@ -59,3 +62,46 @@ services:
     entrypoint: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
     restart: always
 
+  redis:
+    image: redis
+
+  sentrydb:
+    image: postgres:11.2
+    container_name: sentrydb
+    env_file: .env_sentry
+    volumes:
+    - sentry_data:/var/lib/postgresql/data
+
+#  sentry:
+#    image: sentry
+#    container_name: sentry
+#    links:
+#      - redis
+#      - sentrydb
+#      - smtp
+#    ports:
+#      - 9000:9000
+#    env_file: .env_sentry
+#
+#  cron:
+#    image: sentry
+#    container_name: sentry_cron
+#    links:
+#      - redis
+#      - sentrydb
+#    command: "sentry run cron"
+#    env_file: .env_sentry
+#
+#  worker:
+#    image: sentry
+#    container_name: sentry_worker
+#    links:
+#      - redis
+#      - sentrydb
+#    command: "sentry run worker"
+#    env_file: .env_sentry
+#
+#  smtp:
+#    restart: always
+#    container_name: sentry_smtp
+#    image: tianon/exim4

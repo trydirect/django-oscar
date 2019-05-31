@@ -35,7 +35,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('DATABASE_PASS'),
         'HOST': os.environ.get('DATABASE_HOST'),
         'PORT': os.environ.get('DATABASE_PORT'),
-        'ATOMIC_REQUESTS': True
+        'ATOMIC_REQUESTS': False
     }
 }
 
