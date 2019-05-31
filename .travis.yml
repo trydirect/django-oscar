@@ -1,0 +1,34 @@
+language: python
+python:
+- 2.7
+env:
+  matrix:
+  - DOCKER_CONTENT_TRUST=0
+services:
+- docker
+before_install:
+- sudo apt-get update
+- docker-compose --version
+- pip install docker-compose --upgrade
+- docker-compose --version
+install:
+- cd v1_6_7
+- docker-compose -f docker-compose.yml build
+- docker-compose -f docker-compose.yml up -d
+- docker-compose ps
+before_script:
+- pip install requests
+- pip install docker
+- cd $TRAVIS_BUILD_DIR
+script:
+- bash ./.travis/linters.sh
+- python tests.py
+notifications:
+  slack:
+    rooms:
+    - optimum-team:GycletOWK4Kt95GktwYwfUMp#build
+after_success:
+- cd v01/dockerfiles
+- echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+- docker-compose -f docker-compose-build.yml images
+- docker push trydirect/django-oscar:1.6.7
