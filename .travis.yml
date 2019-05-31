@@ -35,6 +35,6 @@ after_success:
 - cd $TRAVIS_BUILD_DIR/v1_6_7
 - echo $DOCKER_USERNAME
 - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+#- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker-compose images
 - docker push trydirect/django-oscar:1.6.7
