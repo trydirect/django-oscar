@@ -3,8 +3,8 @@ version: "2.1"
 volumes:
   oscardb_data:
     driver: local
-  sentry_data:
-    driver: local
+#  sentry_data:
+#    driver: local
 
 services:
 
@@ -20,7 +20,6 @@ services:
     volumes:
       - ./configs/postgresql/pg_hba.conf:/etc/pg_hba.conf
       - oscardb_data:/var/lib/postgresql/data
-
 
   oscar:
     image: trydirect/django-oscar:1.6.7
@@ -62,15 +61,15 @@ services:
     entrypoint: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
     restart: always
 
-  redis:
-    image: redis
-
-  sentrydb:
-    image: postgres:11.2
-    container_name: sentrydb
-    env_file: .env_sentry
-    volumes:
-    - sentry_data:/var/lib/postgresql/data
+#  redis:
+#    image: redis
+#
+#  sentrydb:
+#    image: postgres:11.2
+#    container_name: sentrydb
+#    env_file: .env_sentry
+#    volumes:
+#    - sentry_data:/var/lib/postgresql/data
 
 #  sentry:
 #    image: sentry
