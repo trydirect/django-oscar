@@ -35,6 +35,7 @@ notifications:
     - optimum-team:GycletOWK4Kt95GktwYwfUMp#build
 after_success:
 - cd $TRAVIS_BUILD_DIR/v1_6_7
-- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+- echo $DOCKER_USERNAME
+- echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
 - docker-compose images
 - docker push trydirect/django-oscar
