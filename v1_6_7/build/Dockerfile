@@ -28,7 +28,7 @@ RUN git checkout tags/1.6.7 -b "1.6.7"
 USER root
 RUN pip3 install django-oscar==1.6.7 raven==5.32.0 psycopg2-binary uwsgi supervisor && pip3 install -r requirements.txt
 
-COPY wsgi.ini /app/sandbox/wsgi.ini
+COPY wsgi.ini /etc/oscar-wsgi.ini
 COPY oscar.conf /etc/supervisor/conf.d/oscar.conf
 COPY settings.py /app/sandbox/settings.py
 
