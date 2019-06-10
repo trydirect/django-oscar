@@ -21,12 +21,13 @@ RUN mkdir /app
 RUN chown oscar:oscar /app
 
 USER oscar
+ENV APP_VERSION 1.6.7
 WORKDIR /app
 RUN git clone https://github.com/django-oscar/django-oscar.git .
-RUN git checkout tags/1.6.7 -b "1.6.7"
+RUN git checkout tags/${APP_VERSION} -b "${APP_VERSION}"
 
 USER root
-RUN pip3 install django-oscar==1.6.7 raven==5.32.0 psycopg2-binary uwsgi supervisor && pip3 install -r requirements.txt
+RUN pip3 install django-oscar==${APP_VERSION} raven==5.32.0 psycopg2-binary uwsgi supervisor && pip3 install -r requirements.txt
 
 COPY wsgi.ini /app/sandbox/wsgi.ini
 COPY oscar.conf /etc/supervisor/conf.d/oscar.conf
