@@ -33,6 +33,11 @@ docker exec --user=oscar -it oscar /sandbox.sh
 COMPOSE_HTTP_TIMEOUT=300 docker-compose exec sentry bash -c "sentry upgrade"
 ```
 
+## Quick deployment to cloud
+##### Amazon AWS, Digital Ocean, Hetzner and others
+[<img src="https://img.shields.io/badge/quick%20deploy-%40try.direct-brightgreen.svg">](https://try.direct/server/user/deploy/Im9zY2FyfDZ8Mjgi.EIJLoA.vgPr3uzpDjT2xLigcD4NEy0Cgsk/)
+
+
 
 ## Contributing
 
