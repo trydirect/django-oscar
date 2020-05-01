@@ -28,6 +28,39 @@ In order to create django oscar database structure and load demo data execute fo
 docker exec --user=oscar -it oscar /sandbox.sh
 ```
 
+
+## Share project volume 
+Sync project source code on host machine and container 
+
+1. Generate static files
+```
+docker exec --user=oscar -it oscar  bash -c 'cd sandbox && python3 manage.py collectstatic’
+```
+2. Copy source code from container to host machine:
+```
+docker cp oscar:/app .
+```
+3. Remove containers 
+```
+docker-compose down 
+```
+4. Add line from below to docker-compose.yml for oscar service:
+ ```
+ volumes:
+      - ./app:/app
+```
+
+5. Add line from below to docker-compose.yml for nginx service:
+ ```
+ volumes:
+      - ./app/sandbox/public:/usr/share/nginx/html
+```
+6. Recreate containers 
+```
+docker-compose up -d 
+```
+
+
 ## Setup Sentry
 ```
 COMPOSE_HTTP_TIMEOUT=300 docker-compose exec sentry bash -c "sentry upgrade"
