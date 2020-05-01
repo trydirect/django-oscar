@@ -7,7 +7,7 @@ env:
 services:
 - docker
 before_install:
-- sudo apt-get update
+- sudo apt-get -qq update
 - docker-compose --version
 - pip install docker-compose --upgrade
 - docker-compose --version
@@ -31,5 +31,4 @@ notifications:
 after_success:
 - cd $TRAVIS_BUILD_DIR/v1_6_7
 - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
-- docker-compose images
 - docker push trydirect/django-oscar:1.6.7
