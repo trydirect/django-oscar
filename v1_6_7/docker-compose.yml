@@ -34,6 +34,7 @@ services:
       - .env
     command: ['supervisord', '--nodaemon']
     volumes:
+      - ./app:/app
       - ./configs/oscar/settings.py:/app/sandbox/settings.py
       - ./configs/supervisord/oscar.conf:/etc/supervisor/conf.d/oscar.conf
       - ./scripts/sandbox.sh:/sandbox.sh
@@ -47,6 +48,7 @@ services:
       - "80:80"
       #- "443:443"
     volumes:
+      - ./app/sandbox/public:/usr/share/nginx/html
       - ./configs/certs/ssl:/etc/ssl/nginx
       - ./configs/certs/letsencrypt:/etc/letsencrypt
       - ./configs/cron/nginx:/var/spool/cron/crontabs
