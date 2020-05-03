@@ -21,7 +21,7 @@ RUN apt-get update  && apt-get autoremove -y && apt-get --no-install-recommends 
     uwsgi-src \
     uwsgi \
     && apt-get clean && rm -rf /var/lib/apt/lists/*; \
-    groupadd -r -g 2000 flask; useradd -r -u 2000 -g 2000 -m -c "app account" -d /home/flask -s /bin/bash flask
+    groupadd -r -g 2000 oscar; useradd -r -u 2000 -g 2000 -m -c "app account" -d /home/oscar -s /bin/bash oscar
 
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 COPY locale.gen /etc/locale.gen
